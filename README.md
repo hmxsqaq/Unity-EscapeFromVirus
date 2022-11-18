@@ -6,9 +6,25 @@
 
 **引擎版本：**2020.3.41f1c1 LTS
 
+## 待完成
+
+GameOver逻辑编写
+
+结尾场景搭建
+
+***
+
 ## 玩家移动
 
-采用了Unity的新Input System系统使其同时适配PC与安卓
+##### 提供接口：
+
+PlayerSpeed—决定玩家速度
+
+OperationRange—决定可操作范围
+
+##### 实现方案与思路：
+
+采用了Unity的新Input System系统使其同时适配PC上的鼠标点击与手机触屏操作
 
 在Input System中建立了Position与Act两个Action
 
@@ -22,7 +38,17 @@ Position与Act的回调函数都包含一个bool变量
 
 **状态3：**鼠标左键被抬起，bool值被重新设置为false，回到状态1
 
-## 其余动态精灵管理
+***
+
+## Element类
+
+##### 提供接口(Prefabs中修改)：
+
+ElementSpeed—Element移动速度
+
+Damage—Element与玩家碰撞时时所造成的伤害(当为负值时表现为治疗)
+
+##### 实现方案与思路：
 
 游戏中除玩家外其余动态精灵全部继承自一个Element基类
 
@@ -30,14 +56,48 @@ Element基类实现了获取玩家当前位置，并向玩家位置飞去的功�
 
 同时提供了Speed与Damage两个接口，分别用于设置精灵的速度和与玩家发生碰撞时造成的伤害
 
-## UI层与数据管理
+当Element与玩家碰撞或飞出相机外时自动销毁
 
-UI层中计时器“TimeManager”因效果较为特殊，故单独写了个类，采取协程方法进行计时
+***
 
-其余UI层参考了MVC架构，通过一个不继承Mono的单例类GameModel来存储管理游戏中的“life、score”等数据，当数据变动时，通过事件中心通知UI层进行数据更新
+## Element Generator
 
-## 动态精灵的随机生成
+##### 提供接口：
 
-游戏中有着随机位置生成随机精灵的需求，故创建了空父物体“Elements”，用其挂载的“ElementGenerator”来管理生成其余精灵
+Harmful/Beneficial List—分别存放负面/正面的Prefabs
 
-将其余精灵保存为预制体后，采取了list来存放精灵，后通过Random随机生成即可
+Harm Probability—代表生成负面Prefabs的概率，为1时代表只会生成负面Prefabs
+
+Difficulty List—代表生成Prefabs的时间间隔，每隔一分钟List的index+1(待改进)
+
+##### 实现方案与思路：
+
+通过协程每隔一段时间实例化一个Prefabs
+
+实例化的对象与位置通过随机数决定
+
+位置的随机方法采取了角度随机，随机一个角度值，对象将会再以画面中心为圆心，一个固定值为半径的圆周上随机生成
+
+***
+
+## 定时换口罩系统
+
+##### 提供接口：
+
+MinTriggerTime—两次换口罩玩法时间间隔的下界
+
+MaxTriggerTime—两次换口罩玩法时间间隔的上界
+
+ExchangeTime—玩家需在多少秒内完成换口罩操作
+
+##### 实现方案与思路：
+
+通过两个协程的互相循环调用实现了定时换口罩玩法
+
+游戏开始时启动协程A，协程A会在[MinTriggerTime，MaxTriggerTime)中给出一个随机整数作为下次换口罩玩法的开启倒计时，倒计时结束后，协程A启动协程B，关闭自己
+
+协程B接受一个整形参数ExchangeTime作为时间限制，通过一个bool值来控制内部的while函数，协程B启动时，设置该布尔值为真，后开始while循环，每轮循环持续1s，使ExchangeTime-1，当ExchangeTime<0时游戏结束；当玩家与右下角的Trigger碰撞时，bool值被设定为假，跳出while循环，协程B开启协程A，关闭自己
+
+***
+
+## 答题系统

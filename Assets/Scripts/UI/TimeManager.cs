@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Framework;
 using Game;
@@ -13,6 +14,11 @@ public class TimeManager : MonoBehaviour
     {
         _tmp = GetComponent<TextMeshProUGUI>();
         StartCoroutine(TimeCount());
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
     }
 
     IEnumerator TimeCount()

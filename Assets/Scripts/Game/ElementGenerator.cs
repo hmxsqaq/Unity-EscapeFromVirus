@@ -30,6 +30,11 @@ namespace Game
             
             StartCoroutine(ElementGenerate());
         }
+        
+        private void OnDisable()
+        {
+            StopAllCoroutines();
+        }
 
         private void DifficultySelect()
         {

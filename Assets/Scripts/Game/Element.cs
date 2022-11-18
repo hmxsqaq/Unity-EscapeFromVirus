@@ -7,7 +7,7 @@ namespace Game
         private bool _del;
         private Vector2 _direction;
         private GameObject _protagonist;
-        public float speed;
+        public float elementSpeed;
         public int damage;
 
         private void Awake()
@@ -23,7 +23,7 @@ namespace Game
 
         private void Update()
         {
-            transform.Translate(speed * Time.deltaTime * _direction);
+            transform.Translate(elementSpeed * Time.deltaTime * _direction);
         }
 
         private void OnBecameVisible()

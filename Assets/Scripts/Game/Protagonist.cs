@@ -29,6 +29,7 @@ namespace Game
         private void OnDisable()
         {
             _myInputAction.Disable();
+            StopAllCoroutines();
         }
 
         private void Start()
@@ -38,10 +39,9 @@ namespace Game
                 if (_pressed && Camera.main != null)
                 {
                     _inputPosition = Camera.main.ScreenToWorldPoint((Vector3)context.ReadValue<Vector2>());
-                    Debug.Log(Vector3.Distance(_inputPosition,transform.position));
                     if (Vector3.Distance(_inputPosition,transform.position) < operationRange)
                     {
-                        transform.Translate(((Vector3)_inputPosition - transform.position) * playerSpeed / 100);
+                        transform.Translate(((Vector3)_inputPosition - transform.position) * playerSpeed * Time.deltaTime);
                     }
                 }
             };
@@ -53,28 +53,38 @@ namespace Game
 
         private void OnTriggerEnter2D(Collider2D col)
         {
-            if (!_invincible || col.CompareTag("Prop"))
-                Hited(col.GetComponent<Element>().damage);
-            
-            if (_attack && col.CompareTag("Virus"))
-                GameModel.Instance.Score += 2;
+            if (!col.CompareTag("Exchange"))
+            {
+                if (!_invincible || col.CompareTag("Prop"))
+                    Hited(col.GetComponent<Element>().damage);
 
-            if (col.CompareTag("Alcohol"))
-                StartCoroutine(AttackMode());
+                if (_attack && col.CompareTag("Virus"))
+                    GameModel.Instance.Score += 2;
 
-            if (col.CompareTag("ProtectiveSuit"))
-                StartCoroutine(InvincibleMode());
+                if (col.CompareTag("Alcohol"))
+                    StartCoroutine(AttackMode());
 
-            if (col.CompareTag("QA"))
-                EventManager.Instance.Trigger(EventNameHelper.StartAnswer);
-            
-            
-            Destroy(col.gameObject);
+                if (col.CompareTag("ProtectiveSuit"))
+                    StartCoroutine(InvincibleMode());
+
+                if (col.CompareTag("QA"))
+                    EventManager.Instance.Trigger(EventNameHelper.StartAnswer);
+
+                Destroy(col.gameObject);
+            }
         }
 
         private void Hited(int damage)
         {
-            GameModel.Instance.Life -= damage;
+            if (GameModel.Instance.Life - damage <= 0)
+            {
+                GameModel.Instance.Life = 0;
+                EventManager.Instance.Trigger(EventNameHelper.GameOver);
+            }
+            else
+            {
+                GameModel.Instance.Life -= damage;
+            }
         }
 
         IEnumerator AttackMode()

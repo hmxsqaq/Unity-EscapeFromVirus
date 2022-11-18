@@ -17,6 +17,7 @@ namespace Game
             EventManager.Instance.AddEventListener(EventNameHelper.OnLifeChange,LifeUpdate);
             EventManager.Instance.AddEventListener(EventNameHelper.OnScoreChange,ScoreUpdate);
             EventManager.Instance.AddEventListener(EventNameHelper.GamePause,GamePause);
+            EventManager.Instance.AddEventListener(EventNameHelper.GameOver,GameOver);
             EventManager.Instance.AddEventListener(EventNameHelper.StartAnswer,StartAnswer);
             EventManager.Instance.AddEventListener(EventNameHelper.EndAnswer,EndAnswer);
         }
@@ -24,10 +25,6 @@ namespace Game
         private void LifeUpdate()
         {
             lifeTMP.text = $"生命:{GameModel.Instance.Life}";
-            if (GameModel.Instance.Life <= 0)
-            {
-                EventManager.Instance.Trigger(EventNameHelper.GameOver);
-            }
         }
 
         private void ScoreUpdate()
@@ -47,6 +44,11 @@ namespace Game
                 Time.timeScale = 1;
                 pausePanel.SetActive(false);
             }
+        }
+
+        private void GameOver()
+        {
+            Debug.Log("GameOver");
         }
 
         private void StartAnswer()
