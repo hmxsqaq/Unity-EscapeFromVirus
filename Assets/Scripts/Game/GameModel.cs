@@ -4,10 +4,11 @@ namespace Game
 {
     public class GameModel : Singleton<GameModel>
     {
-        private int _life = 10;
-        private int _score = 0;
-        private int _minutes = 0;
-        private int _seconds = 0;
+        private int _life;
+        private int _score;
+        private int _minutes;
+        private int _seconds;
+        
         public int Life
         {
             get => _life;

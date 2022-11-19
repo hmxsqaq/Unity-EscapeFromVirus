@@ -1,40 +1,29 @@
 ﻿using System;
+using Framework;
 using UnityEngine;
 
 namespace UI
 {
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : MonoSingleton<AudioManager>
     {
-        private static AudioManager _instance;
         private AudioSource _audioSource;
         public AudioClip[] audioClips;
-
-        private void Awake()
-        {
-            if (_instance == null)
-            {
-                _instance = this;
-                DontDestroyOnLoad(this);
-            }
-            else
-            {
-                Destroy(this);
-            }
-        }
 
         private void Start()
         {
             _audioSource = GetComponent<AudioSource>();
+            AudioPlay(0,true);
+            EventManager.Instance.AddEventListener(EventNameHelper.AudioPause,AudioPause);
         }
 
-        public void AudioPlay(int audioIndex,bool isloop)
+        private void AudioPlay(int audioIndex,bool isloop)
         {
             _audioSource.clip = audioClips[audioIndex];
             _audioSource.loop = isloop;
             _audioSource.Play();
         }
 
-        public void AudioPause()
+        private void AudioPause()
         {
             if (_audioSource.pitch == 0)
             {

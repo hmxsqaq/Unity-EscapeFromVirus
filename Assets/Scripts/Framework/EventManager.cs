@@ -90,11 +90,17 @@ namespace Framework
     {
         public const string OnLifeChange = "OnLifeChange";
         public const string OnScoreChange = "OnScoreChange";
+        
         public const string OnMinuteChange = "OnMinuteChange";
+        
         public const string GameStart = "GameStart";
         public const string GameOver = "GameOver";
         public const string GamePause = "GamePause";
+        public const string GameReady = "GameReady";
+        
         public const string StartAnswer = "StartAnswer";
         public const string EndAnswer = "EndAnswer";
+
+        public const string AudioPause = "AudioPause";
     }
 }

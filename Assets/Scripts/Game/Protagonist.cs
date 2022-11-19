@@ -12,10 +12,12 @@ namespace Game
         private bool _pressed;
         private bool _attack;
         private bool _invincible;
+        private bool _isReady;
 
         public float operationRange;
         public float playerSpeed;
-        
+        public int initLife;
+
         private void Awake()
         {
             _myInputAction = new MyInputAction();
@@ -34,6 +36,8 @@ namespace Game
 
         private void Start()
         {
+            GameModel.Instance.Life = initLife;
+            
             _myInputAction.Game.Position.performed += context =>
             {
                 if (_pressed && Camera.main != null)
@@ -48,6 +52,11 @@ namespace Game
             _myInputAction.Game.Act.performed += context =>
             {
                 _pressed = context.ReadValueAsButton();
+                if (!_isReady)
+                {
+                    EventManager.Instance.Trigger(EventNameHelper.GameReady);
+                    _isReady = true;
+                }
             };
         }
 
@@ -80,6 +89,10 @@ namespace Game
             {
                 GameModel.Instance.Life = 0;
                 EventManager.Instance.Trigger(EventNameHelper.GameOver);
+            }
+            else if (GameModel.Instance.Life - damage >= initLife)
+            {
+                GameModel.Instance.Life = initLife;
             }
             else
             {

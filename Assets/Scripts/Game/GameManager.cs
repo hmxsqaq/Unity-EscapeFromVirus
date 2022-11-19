@@ -11,15 +11,25 @@ namespace Game
         public TextMeshProUGUI scoreTMP;
         public GameObject pausePanel;
         public GameObject qAPanel;
+        public GameObject readyStart;
 
-        private void Start()
+        private void Awake()
         {
             EventManager.Instance.AddEventListener(EventNameHelper.OnLifeChange,LifeUpdate);
             EventManager.Instance.AddEventListener(EventNameHelper.OnScoreChange,ScoreUpdate);
+            
             EventManager.Instance.AddEventListener(EventNameHelper.GamePause,GamePause);
             EventManager.Instance.AddEventListener(EventNameHelper.GameOver,GameOver);
+            EventManager.Instance.AddEventListener(EventNameHelper.GameReady,GamePause);
+            EventManager.Instance.AddEventListener(EventNameHelper.GameReady,GameReady);
+
             EventManager.Instance.AddEventListener(EventNameHelper.StartAnswer,StartAnswer);
             EventManager.Instance.AddEventListener(EventNameHelper.EndAnswer,EndAnswer);
+        }
+
+        private void Start()
+        {
+            EventManager.Instance.Trigger(EventNameHelper.GameReady);
         }
 
         private void LifeUpdate()
@@ -48,7 +58,19 @@ namespace Game
 
         private void GameOver()
         {
-            Debug.Log("GameOver");
+            Time.timeScale = 0;
+        }
+
+        private void GameReady()
+        {
+            if (readyStart.activeSelf)
+            {
+                readyStart.SetActive(false);
+            }
+            else
+            {
+                readyStart.SetActive(true);
+            }
         }
 
         private void StartAnswer()

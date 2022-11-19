@@ -1,29 +1,49 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class SceneManager : MonoBehaviour
     {
-        private static SceneManager _instance;
-        public string[] scenesName;
-
-        private void Awake()
+        public RawImage backImage;
+        public float fadeSpeed = 1.5f;
+        private bool _sceneEnding = false;
+        private string _sceneName;
+ 
+        void Start()
         {
-            if (_instance == null)
+            backImage.enabled = false;
+            backImage.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);
+        }
+ 
+        void Update()
+        {
+            if (_sceneEnding)
             {
-                _instance = this;
-                DontDestroyOnLoad(this);
+                EndScene(_sceneName);
             }
-            else
+        }
+        
+        private void FadeToBlack()
+        {
+            backImage.color = Color.Lerp(backImage.color, Color.black, fadeSpeed * Time.deltaTime);
+        }
+        
+        private void EndScene(string sceneName)
+        {
+            backImage.enabled = true;
+            FadeToBlack();
+            if(backImage.color.a >= 0.95f)
             {
-                Destroy(this);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+                _sceneEnding = false;
             }
         }
 
-        public void SceneSwitch(int sceneIndex)
+        public void SceneSwitch(string sceneName)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(scenesName[sceneIndex]);
+            _sceneName = sceneName;
+            _sceneEnding = true;
         }
     }
 }

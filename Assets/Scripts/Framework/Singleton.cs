@@ -18,8 +18,6 @@ namespace Framework
             }
         }
 
-        protected virtual void OnInstanceCreate()
-        {
-        }
+        protected virtual void OnInstanceCreate() { }
     }
 }
