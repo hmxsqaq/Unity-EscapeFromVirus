@@ -4,18 +4,28 @@ using Framework;
 using TMPro;
 using UnityEngine;
 using UI;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
     public class GameManager : MonoBehaviour
     {
+        [Header("TMP Object")]
         public TextMeshProUGUI lifeTMP;
         public TextMeshProUGUI scoreTMP;
+        
+        [Header("Effect UI")]
         public GameObject pausePanel;
         public GameObject qAPanel;
         public GameObject readyStart;
         public GameObject end;
         public GameObject sceneManager;
+
+        [Header("Background and Protagonist")]
+        public SpriteRenderer background;
+        public Sprite[] backgrounds;
+        public SpriteRenderer protagonist;
+        public Sprite[] nomalProtagonist;
 
         private void Awake()
         {
@@ -49,16 +59,17 @@ namespace Game
         private void Start()
         {
             EventManager.Instance.Trigger(EventNameHelper.GameReady);
+            RandomBackground();
         }
 
         private void LifeUpdate()
         {
-            lifeTMP.text = $"生命:{GameModel.Instance.Life}";
+            lifeTMP.text = $"{GameModel.Instance.Life}";
         }
 
         private void ScoreUpdate()
         {
-            scoreTMP.text = $"金钱:{GameModel.Instance.Score}";
+            scoreTMP.text = $"{GameModel.Instance.Score}";
         }
 
         private void GamePause()
@@ -110,6 +121,15 @@ namespace Game
         {
             qAPanel.SetActive(false);
             EventManager.Instance.Trigger(EventNameHelper.GamePause);
+        }
+
+        private void RandomBackground()
+        {
+            int index = Random.Range(0, backgrounds.Length);
+            GameModel.Instance.Index = index;
+            background.sprite = backgrounds[index];
+            index = Random.Range(0, nomalProtagonist.Length);
+            protagonist.sprite = nomalProtagonist[index];
         }
     }
 }

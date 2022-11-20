@@ -8,7 +8,8 @@ namespace Game
         private int _score;
         private int _minutes;
         private int _seconds;
-        
+
+        public int Index;
         public int Life
         {
             get => _life;
