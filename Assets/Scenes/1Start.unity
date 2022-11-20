@@ -1787,7 +1787,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backImage: {fileID: 590701833}
-  fadeSpeed: 3
 --- !u!1 &1917035385
 GameObject:
   m_ObjectHideFlags: 0

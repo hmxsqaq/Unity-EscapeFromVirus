@@ -34,6 +34,7 @@ namespace Game
         private void OnDisable()
         {
             StopAllCoroutines();
+            EventManager.Instance.RemoveEventListener(EventNameHelper.OnMinuteChange,DifficultySelect);
         }
 
         private void DifficultySelect()

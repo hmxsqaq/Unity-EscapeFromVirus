@@ -1558,7 +1558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backImage: {fileID: 691405108}
-  fadeSpeed: 3
+  fadeSpeed: 0.5
 --- !u!81 &1781572809
 AudioListener:
   m_ObjectHideFlags: 0

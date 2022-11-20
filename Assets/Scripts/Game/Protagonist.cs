@@ -21,6 +21,9 @@ namespace Game
         private void Awake()
         {
             _myInputAction = new MyInputAction();
+            GameModel.Instance.Life = initLife;
+            GameModel.Instance.Minutes = 0;
+            GameModel.Instance.Seconds = 0;
         }
 
         private void OnEnable()
