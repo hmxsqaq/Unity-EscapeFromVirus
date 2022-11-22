@@ -13,10 +13,26 @@ namespace Game
         private bool _attack;
         private bool _invincible;
         private bool _isReady;
+        private bool _normalMasked;
+        private bool _n95Masked;
+        private Coroutine _attackMode;
+        private Coroutine _invincibleMode;
+        private Coroutine _maskedMode;
 
+        [Header("Control")] 
+        public GameObject bigRect;
+        public GameObject smallRect;
+        
+        [Header("Protagonist")]
         public float operationRange;
         public float playerSpeed;
         public int initLife;
+
+        [Header("Ability Lasting Time")] 
+        public float attackModeTime;
+        public float invincibleModeTime;
+        public float normalMaskTime;
+        public float n95MaskTime;
 
         private void Awake()
         {
@@ -54,36 +70,73 @@ namespace Game
             };
             _myInputAction.Game.Act.performed += context =>
             {
-                _pressed = context.ReadValueAsButton();
                 if (!_isReady)
                 {
                     EventManager.Instance.Trigger(EventNameHelper.GameReady);
                     _isReady = true;
                 }
+                _pressed = context.ReadValueAsButton();
             };
         }
 
         private void OnTriggerEnter2D(Collider2D col)
         {
-            if (!col.CompareTag("Exchange"))
+            int hit = col.GetComponent<Element>().damage;
+            
+            if (!_invincible && col.CompareTag("Virus"))
             {
-                if (!_invincible || col.CompareTag("Prop"))
-                    Hited(col.GetComponent<Element>().damage);
-
-                if (_attack && col.CompareTag("Virus"))
-                    GameModel.Instance.Score += 2;
-
-                if (col.CompareTag("Alcohol"))
-                    StartCoroutine(AttackMode());
-
-                if (col.CompareTag("ProtectiveSuit"))
-                    StartCoroutine(InvincibleMode());
-
-                if (col.CompareTag("QA"))
-                    EventManager.Instance.Trigger(EventNameHelper.StartAnswer);
-
-                Destroy(col.gameObject);
+                if (_n95Masked)
+                {
+                    hit -= 2;
+                }
+                else if (_normalMasked)
+                {
+                    hit -= 1;
+                }
+                Hited(hit);
             }
+
+            if (col.CompareTag("Prop"))
+            {
+                Hited(hit);
+            }
+            
+            if (_attack && col.CompareTag("Virus"))
+                GameModel.Instance.Score += 20;
+
+            if (col.CompareTag("Alcohol"))
+            {
+                if (_attackMode != null)
+                {
+                    StopCoroutine(_attackMode);
+                }
+                _attackMode = StartCoroutine(AttackMode());
+            }
+            
+            if (col.CompareTag("ProtectiveSuit"))
+            {
+                if (_invincibleMode != null)
+                {
+                    StopCoroutine(_invincibleMode);
+                }
+                _invincibleMode = StartCoroutine(InvincibleMode());
+            }
+
+            if (col.CompareTag("MaskNormal") || col.CompareTag("MaskN95"))
+            {
+                if (_maskedMode != null)
+                {
+                    StopCoroutine(_maskedMode);
+                }
+                _maskedMode = col.CompareTag("MaskNormal")
+                    ? StartCoroutine(Masked(true))
+                    : StartCoroutine(Masked(false));
+            }
+
+            if (col.CompareTag("QA"))
+                EventManager.Instance.Trigger(EventNameHelper.StartAnswer);
+
+            Destroy(col.gameObject);
         }
 
         private void Hited(int damage)
@@ -106,17 +159,41 @@ namespace Game
         IEnumerator AttackMode()
         {
             _attack = true;
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(attackModeTime);
             _attack = false;
-            StopCoroutine(AttackMode());
+            StopCoroutine(_attackMode);
+            _attackMode = null;
         }
         
         IEnumerator InvincibleMode()
         {
             _invincible = true;
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(invincibleModeTime);
             _invincible = false;
-            StopCoroutine(InvincibleMode());
+            StopCoroutine(_invincibleMode);
+            _invincibleMode = null;
+        }
+
+        IEnumerator Masked(bool normal)
+        {
+            
+            if (normal)
+            {
+                _normalMasked = true;
+                _n95Masked = false;
+                yield return new WaitForSeconds(normalMaskTime);
+            }
+            else
+            {
+                _normalMasked = false;
+                _n95Masked = true;
+                yield return new WaitForSeconds(n95MaskTime);
+            }
+            _normalMasked = false;
+            _n95Masked = false;
+            
+            StopCoroutine(_maskedMode);
+            _maskedMode = null;
         }
     }
 }

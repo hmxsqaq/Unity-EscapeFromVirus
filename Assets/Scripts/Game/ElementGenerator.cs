@@ -26,7 +26,7 @@ namespace Game
         private void Start()
         {
             _waitForSeconds = new WaitForSeconds(difficultyList[0]);
-            EventManager.Instance.AddEventListener(EventNameHelper.OnMinuteChange,DifficultySelect);
+            EventManager.Instance.AddEventListener(EventNameHelper.OnDifficultyChange,DifficultySelect);
             
             StartCoroutine(ElementGenerate());
         }
@@ -34,7 +34,7 @@ namespace Game
         private void OnDisable()
         {
             StopAllCoroutines();
-            EventManager.Instance.RemoveEventListener(EventNameHelper.OnMinuteChange,DifficultySelect);
+            EventManager.Instance.RemoveEventListener(EventNameHelper.OnDifficultyChange,DifficultySelect);
         }
 
         private void DifficultySelect()

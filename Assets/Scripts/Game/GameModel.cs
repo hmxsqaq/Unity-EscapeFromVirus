@@ -9,7 +9,7 @@ namespace Game
         private int _minutes;
         private int _seconds;
 
-        public int Index;
+        public int BackgroundIndex;
         public int Life
         {
             get => _life;
@@ -36,14 +36,21 @@ namespace Game
             set
             {
                 _minutes = value;
-                EventManager.Instance.Trigger(EventNameHelper.OnMinuteChange);
+                EventManager.Instance.Trigger(EventNameHelper.OnDifficultyChange);
             }
         }
 
         public int Seconds
         {
             get => _seconds; 
-            set => _seconds = value;
+            set
+            {
+                _seconds = value;
+                if (value == 30)
+                {
+                    EventManager.Instance.Trigger(EventNameHelper.OnDifficultyChange);
+                }
+            }
         }
     }
 }

@@ -14,6 +14,6 @@ public class EndTime : MonoBehaviour
         string sMinutes = GameModel.Instance.Minutes < 10 ? $"0{GameModel.Instance.Minutes}" : $"{GameModel.Instance.Minutes}";
         string sSeconds = GameModel.Instance.Seconds < 10 ? $"0{GameModel.Instance.Seconds}" : $"{GameModel.Instance.Seconds}";
         GetComponent<TextMeshProUGUI>().text = sMinutes + ":" + sSeconds;
-        background.sprite = backgrounds[GameModel.Instance.Index];
+        background.sprite = backgrounds[GameModel.Instance.BackgroundIndex];
     }
 }

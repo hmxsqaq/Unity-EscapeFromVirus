@@ -91,9 +91,8 @@ namespace Framework
         public const string OnLifeChange = "OnLifeChange";
         public const string OnScoreChange = "OnScoreChange";
         
-        public const string OnMinuteChange = "OnMinuteChange";
+        public const string OnDifficultyChange = "OnDifficultyChange";
         
-        public const string GameStart = "GameStart";
         public const string GameOver = "GameOver";
         public const string GamePause = "GamePause";
         public const string GameReady = "GameReady";
@@ -102,5 +101,8 @@ namespace Framework
         public const string EndAnswer = "EndAnswer";
 
         public const string AudioPause = "AudioPause";
+
+        public const string WearNormalMask = "WearNormalMask";
+        public const string WearN95Mask = "WearN95Mask";
     }
 }

@@ -11,6 +11,8 @@ TagManager:
   - ProtectiveSuit
   - QA
   - Exchange
+  - MaskNormal
+  - MaskN95
   layers:
   - Default
   - TransparentFX

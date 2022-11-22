@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Framework;
 using TMPro;
 using UnityEngine;
@@ -25,7 +26,6 @@ namespace Game
         public SpriteRenderer background;
         public Sprite[] backgrounds;
         public SpriteRenderer protagonist;
-        public Sprite[] nomalProtagonist;
 
         private void Awake()
         {
@@ -96,7 +96,6 @@ namespace Game
         {
             yield return new WaitForSecondsRealtime(1.5f);
             sceneManager.GetComponent<SceneManager>().SceneSwitch("4End");
-            StopCoroutine(ToEnd());
         }
 
         private void GameReady()
@@ -126,10 +125,8 @@ namespace Game
         private void RandomBackground()
         {
             int index = Random.Range(0, backgrounds.Length);
-            GameModel.Instance.Index = index;
+            GameModel.Instance.BackgroundIndex = index;
             background.sprite = backgrounds[index];
-            index = Random.Range(0, nomalProtagonist.Length);
-            protagonist.sprite = nomalProtagonist[index];
         }
     }
 }
