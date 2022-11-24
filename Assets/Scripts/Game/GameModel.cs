@@ -1,4 +1,5 @@
 ﻿using Framework;
+using UI;
 
 namespace Game
 {
@@ -10,6 +11,12 @@ namespace Game
         private int _seconds;
 
         public int BackgroundIndex;
+        public int ProtagonistIndex;
+
+        public int CurrentDamage;
+
+        public DataRoot DataRoot;
+        
         public int Life
         {
             get => _life;

@@ -1,0 +1,16 @@
+﻿{
+  "TestData": [
+    {
+      "Question": "is this a json?",
+      "OptionA": "yes",
+      "OptionB": "no",
+      "CorrectAnswer": true
+    },
+    {
+      "Question": "is this a txt?",
+      "OptionA": "yes",
+      "OptionB": "no",
+      "CorrectAnswer": false
+    }
+  ]
+}

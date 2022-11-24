@@ -26,6 +26,8 @@ namespace Game
         public SpriteRenderer background;
         public Sprite[] backgrounds;
         public SpriteRenderer protagonist;
+        public Sprite[] normalProtagonists;
+        public Sprite[] attackModeProtagonists;
 
         private void Awake()
         {
@@ -38,6 +40,8 @@ namespace Game
             EventManager.Instance.AddEventListener(EventNameHelper.GameReady,GameReady);
             EventManager.Instance.AddEventListener(EventNameHelper.StartAnswer,StartAnswer);
             EventManager.Instance.AddEventListener(EventNameHelper.EndAnswer,EndAnswer);
+            EventManager.Instance.AddEventListener(EventNameHelper.NormalModeSwitch,NormalModeSwitch);
+            EventManager.Instance.AddEventListener(EventNameHelper.AttackModeSwitch,AttackModeSwitch);
         }
 
         private void OnDisable()
@@ -54,6 +58,8 @@ namespace Game
             EventManager.Instance.RemoveEventListener(EventNameHelper.GameReady,GameReady);
             EventManager.Instance.RemoveEventListener(EventNameHelper.StartAnswer,StartAnswer);
             EventManager.Instance.RemoveEventListener(EventNameHelper.EndAnswer,EndAnswer);
+            EventManager.Instance.RemoveEventListener(EventNameHelper.NormalModeSwitch,NormalModeSwitch);
+            EventManager.Instance.RemoveEventListener(EventNameHelper.AttackModeSwitch,AttackModeSwitch);
         }
 
         private void Start()
@@ -127,6 +133,27 @@ namespace Game
             int index = Random.Range(0, backgrounds.Length);
             GameModel.Instance.BackgroundIndex = index;
             background.sprite = backgrounds[index];
+
+            index = Random.Range(0, normalProtagonists.Length);
+            GameModel.Instance.ProtagonistIndex = index;
+            protagonist.sprite = normalProtagonists[index];
         }
+
+
+        private void NormalModeSwitch()
+        {
+            protagonist.sprite = normalProtagonists[GameModel.Instance.ProtagonistIndex];
+        }
+        
+        private void AttackModeSwitch()
+        {
+            protagonist.sprite = attackModeProtagonists[GameModel.Instance.ProtagonistIndex];
+        }
+
+        private void InvincibleModeSwutch()
+        {
+            
+        }
+        
     }
 }

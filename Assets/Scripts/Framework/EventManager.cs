@@ -102,7 +102,11 @@ namespace Framework
 
         public const string AudioPause = "AudioPause";
 
-        public const string WearNormalMask = "WearNormalMask";
-        public const string WearN95Mask = "WearN95Mask";
+        public const string NormalModeSwitch = "NormalModeSwitch";
+        public const string AttackModeSwitch = "AttackModeSwitch";
+
+        public const string ShowHitedNumber = "ShowHitedNumber";
+        public const string ShowScoreNumber = "ShowScoreNumber";
+        public const string ShowHealNumber = "ShowHealNumber";
     }
 }

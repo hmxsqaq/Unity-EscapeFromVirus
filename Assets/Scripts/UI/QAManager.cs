@@ -1,16 +1,37 @@
-﻿using System.Threading;
-using Framework;
+﻿using Framework;
+using Game;
+using TMPro;
 using UnityEngine;
 
 namespace UI
 {
     public class QAManager : MonoBehaviour
     {
-        public string correctAnswer;
+        public TextMeshProUGUI question;
+        public TextMeshProUGUI optionA;
+        public TextMeshProUGUI optionB;
         
+        private string _correctAnswer;
+
+        private void OnEnable()
+        {
+            int questionNumber = Random.Range(0,GameModel.Instance.DataRoot.TestData.Length);
+            question.text = GameModel.Instance.DataRoot.TestData[questionNumber].Question;
+            optionA.text = GameModel.Instance.DataRoot.TestData[questionNumber].OptionA;
+            optionB.text = GameModel.Instance.DataRoot.TestData[questionNumber].OptionB;
+            if (GameModel.Instance.DataRoot.TestData[questionNumber].CorrectAnswer)
+            {
+                _correctAnswer = "A";
+            }
+            else
+            {
+                _correctAnswer = "B";
+            }
+        }
+
         public void AnswerSelect(string ansewer)
         {
-            if (ansewer == correctAnswer)
+            if (ansewer == _correctAnswer)
             {
                 AnswerCorrect();
             }
