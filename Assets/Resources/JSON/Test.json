@@ -2,15 +2,13 @@
   "TestData": [
     {
       "Question": "is this a json?",
-      "OptionA": "yes",
-      "OptionB": "no",
-      "CorrectAnswer": true
+      "CorrectAnswer": true,
+      "Introducation": "this is a json"
     },
     {
       "Question": "is this a txt?",
-      "OptionA": "yes",
-      "OptionB": "no",
-      "CorrectAnswer": false
+      "CorrectAnswer": false,
+      "Introducation": "this is a json"
     }
   ]
 }

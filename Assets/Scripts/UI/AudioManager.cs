@@ -9,11 +9,20 @@ namespace UI
         private AudioSource _audioSource;
         public AudioClip[] audioClips;
 
+        private void OnEnable()
+        {
+            EventManager.Instance.AddEventListener(EventNameHelper.AudioPause,AudioPause);
+        }
+
+        private void OnDisable()
+        {
+            EventManager.Instance.RemoveEventListener(EventNameHelper.AudioPause,AudioPause);
+        }
+
         private void Start()
         {
             _audioSource = GetComponent<AudioSource>();
             AudioPlay(0,true);
-            EventManager.Instance.AddEventListener(EventNameHelper.AudioPause,AudioPause);
         }
 
         private void AudioPlay(int audioIndex,bool isloop)

@@ -26,9 +26,8 @@ namespace UI
     public class Test
     {
         public string Question;
-        public string OptionA;
-        public string OptionB;
         public bool CorrectAnswer;
+        public string Introducation;
     }
 
     [Serializable]

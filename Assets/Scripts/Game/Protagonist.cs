@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Framework;
-using UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,6 +9,10 @@ namespace Game
     {
         private MyInputAction _myInputAction;
         private Vector3 _inputPosition;
+        private Vector3 _startPosition;
+        private Vector3 _endPosition;
+        private Vector3 _direction;
+        
         private bool _pressed;
         private bool _isReady;// need to show the ready panel
         
@@ -18,21 +20,30 @@ namespace Game
         private bool _invincible;// invincible state mark
         private bool _normalMasked;// normalmask state mark
         private bool _n95Masked;// n95mask state mark
-        
+        private bool _slow;
+        private bool _hited;
+
         // record the Coroutine ID to stop the corresponding Coroutine
         private Coroutine _attackMode;
         private Coroutine _invincibleMode;
         private Coroutine _maskedMode;
+        private Coroutine _lowSpeedMode;
         
+        // display states
+        private SpriteRenderer _maskNormal;
+        private SpriteRenderer _maskN95;
+        private SpriteRenderer _protected;
+        private SpriteRenderer _spriteRenderer;
+
         // the virtual rocker
         private Transform _bigRect;
         private Transform _smallRect;
         
         private Camera _camera;
-        private const float XMax = 2.2f;
-        private const float YMax = 4.2f;
-        private const float XMin = -2.2f;
-        private const float YMin = -4.2f;
+        private const float XMax = 2.3f;
+        private const float YMax = 3.76f;
+        private const float XMin = -2.3f;
+        private const float YMin = -5f;
 
         [Header("Protagonist")]
         public float playerSpeed;
@@ -43,13 +54,10 @@ namespace Game
         public float invincibleModeTime;
         public float normalMaskTime;
         public float n95MaskTime;
+        public float lowSpeedTime;
+
+        [Header("Anima")] public float hitFadeTime;
         
-        [Header("Mask")]
-        private SpriteRenderer _maskNormal;
-        private SpriteRenderer _maskN95;
-        private SpriteRenderer _protected;
-        public Sprite[] normalMasks;
-        public Sprite[] n95Masks;
         
         private void Awake()
         {
@@ -72,16 +80,15 @@ namespace Game
 
         private void Start()
         {
-            GameModel.Instance.Life = initLife;
-            
             _camera = Camera.main;
             _bigRect = GameObject.Find("BigCircle").transform;
             _smallRect = _bigRect.GetChild(0);
 
+            _spriteRenderer = GetComponent<SpriteRenderer>();
             _maskNormal = transform.GetChild(0).GetComponent<SpriteRenderer>();
             _maskN95 = transform.GetChild(1).GetComponent<SpriteRenderer>();
             _protected = transform.GetChild(2).GetComponent<SpriteRenderer>();
-            
+
             _myInputAction.Game.Act.performed += context =>
             {
                 // “press to start the game”
@@ -90,56 +97,109 @@ namespace Game
                     EventManager.Instance.Trigger(EventNameHelper.GameReady);
                     _isReady = true;
                 }
-                
-                _pressed = context.ReadValueAsButton();
-                
-                _inputPosition = Vector3.zero;// init the inputPosition
-                
-                // show the virtual rocker where you click
-                Vector3 point = _bigRect.transform.position;
-                if (Camera.main != null)
+                else
                 {
+                    // _pressed = context.ReadValueAsButton();
+
+                    // _inputPosition = Vector3.zero; // init the inputPosition
+                    //
+                    // // show the virtual rocker where you click
+                    // Vector3 point = _bigRect.transform.position;
+                    // if (Camera.main != null)
+                    // {
+                    //     if (Mouse.current != null)
+                    //     {
+                    //         point = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                    //     }
+                    //
+                    //     if (Touchscreen.current != null)
+                    //     {
+                    //         point = Camera.main.ScreenToWorldPoint(Touchscreen.current.position.ReadValue());
+                    //     }
+                    //
+                    //     point.z = 0;
+                    //     _bigRect.transform.position = point;
+                    // }
+                    //
+                    // _bigRect.GetComponent<Renderer>().enabled = _pressed;
+                    // _smallRect.GetComponent<Renderer>().enabled = _pressed;
+
                     if (Mouse.current != null)
                     {
-                        point = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                        if (_camera != null)
+                            _inputPosition = _camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
                     }
                     if (Touchscreen.current != null)
                     {
-                        point = Camera.main.ScreenToWorldPoint(Touchscreen.current.position.ReadValue());
+                        if (_camera != null)
+                            _inputPosition = _camera.ScreenToWorldPoint(Touchscreen.current.position.ReadValue());
                     }
-                    point.z = 0;
-                    _bigRect.transform.position = point;
+                    _inputPosition.z = 0;
+                    if (context.ReadValueAsButton())
+                    {
+                        _startPosition = _inputPosition;
+                    }
+                    else if (_startPosition != null)
+                    {
+                        _endPosition = _inputPosition;
+                        _direction = _endPosition - _startPosition;
+                    }
                 }
-                _bigRect.GetComponent<Renderer>().enabled = _pressed;
-                _smallRect.GetComponent<Renderer>().enabled = _pressed;
             };
         }
 
         private void FixedUpdate()
         {
-            // protagonist move
-            if (_pressed && _camera != null)
-            {
-                if (Mouse.current != null)
-                {
-                    _inputPosition = _camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-                }
-                if (Touchscreen.current != null)
-                {
-                    _inputPosition = _camera.ScreenToWorldPoint(Touchscreen.current.position.ReadValue());
-                }
-                _inputPosition.z = 0;
-                _inputPosition -= _bigRect.transform.position;
-                if (_inputPosition.magnitude >= 1)
-                {
-                    _inputPosition = _inputPosition.normalized;
-                }
-                _smallRect.transform.localPosition = (Vector3)_inputPosition * 0.33f;
-                transform.Translate(_inputPosition * playerSpeed);
-            }
+            // // protagonist move
+            // if (_pressed && _camera != null)
+            // {
+            //     if (Mouse.current != null)
+            //     {
+            //         _inputPosition = _camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            //     }
+            //     if (Touchscreen.current != null)
+            //     {
+            //         _inputPosition = _camera.ScreenToWorldPoint(Touchscreen.current.position.ReadValue());
+            //     }
+            //     _inputPosition.z = 0;
+            //     _inputPosition -= _bigRect.transform.position;
+            //     transform.Translate(_inputPosition.normalized * playerSpeed);// Move
+            //     
+            //     // small virtual rocker position 
+            //     if (_inputPosition.magnitude >= 1)
+            //         _inputPosition = _inputPosition.normalized;
+            //     _smallRect.transform.localPosition = (Vector3)_inputPosition * 0.33f;
+            //     
+            //     // protagonist position rect limit
+            //     transform.position = new Vector3(Mathf.Clamp(transform.position.x, XMin, XMax),
+            //         Mathf.Clamp(transform.position.y, YMin, YMax), 0);
+            // }
+
+            
+            transform.Translate(_direction * playerSpeed);
             transform.position = new Vector3(Mathf.Clamp(transform.position.x, XMin, XMax),
                 Mathf.Clamp(transform.position.y, YMin, YMax), 0);
-            transform.Translate(_inputPosition * playerSpeed);
+            
+        }
+
+        private void Update()
+        {
+            if (_hited)
+            {
+                _spriteRenderer.color = Color.Lerp(_spriteRenderer.color, Color.red, Time.deltaTime * hitFadeTime);
+                if (_spriteRenderer.color.g < 0.05)
+                {
+                    if (_slow)
+                    {
+                        _spriteRenderer.color = Color.cyan;
+                    }
+                    else
+                    {
+                        _spriteRenderer.color = Color.white;
+                    }
+                    _hited = false;
+                }
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D col)
@@ -148,6 +208,7 @@ namespace Game
             
             if (!_invincible && col.CompareTag("Virus"))
             {
+                _hited = true;
                 if (_n95Masked)
                 {
                     hit -= 2;
@@ -156,12 +217,19 @@ namespace Game
                 {
                     hit -= 1;
                 }
+                else
+                {
+                    if (_lowSpeedMode != null) StopCoroutine(_lowSpeedMode);
+                    _lowSpeedMode = StartCoroutine(LowSpeed());
+                }
                 Hited(hit);
+                EventManager.Instance.Trigger(EventNameHelper.AudioVirusAttack);
             }
 
             if (col.CompareTag("Prop"))
             {
                 Hited(hit);
+                EventManager.Instance.Trigger(EventNameHelper.AudioGetProps);
             }
             
             if (_attack && col.CompareTag("Virus"))
@@ -172,49 +240,46 @@ namespace Game
 
             if (col.CompareTag("Alcohol"))
             {
-                if (_attackMode != null)
-                {
-                    StopCoroutine(_attackMode);
-                }
+                if (_attackMode != null) StopCoroutine(_attackMode);
                 _attackMode = StartCoroutine(AttackMode());
+                EventManager.Instance.Trigger(EventNameHelper.AudioGetProps);
             }
             
             if (col.CompareTag("ProtectiveSuit"))
             {
-                if (_invincibleMode != null)
-                {
-                    StopCoroutine(_invincibleMode);
-                }
+                if (_invincibleMode != null) StopCoroutine(_invincibleMode);
                 _invincibleMode = StartCoroutine(InvincibleMode());
+                EventManager.Instance.Trigger(EventNameHelper.AudioGetProps);
             }
 
             if (col.CompareTag("MaskNormal") || col.CompareTag("MaskN95"))
             {
-                if (_maskedMode != null)
-                {
-                    StopCoroutine(_maskedMode);
-                }
+                if (_maskedMode != null) StopCoroutine(_maskedMode);
                 _maskedMode = col.CompareTag("MaskNormal")
                     ? StartCoroutine(Masked(true))
                     : StartCoroutine(Masked(false));
+                EventManager.Instance.Trigger(EventNameHelper.AudioGetProps);
             }
 
             if (col.CompareTag("QA"))
+            {
                 EventManager.Instance.Trigger(EventNameHelper.StartAnswer);
+                EventManager.Instance.Trigger(EventNameHelper.AudioGetProps);
+            }
 
             Destroy(col.gameObject);
         }
 
         private void Hited(int damage)
         {
-            if (GameModel.Instance.Life - damage <= 0)
+            if (GameModel.Instance.Life - damage <= 0)// if you die
             {
                 GameModel.Instance.CurrentDamage = GameModel.Instance.Life;
-                EventManager.Instance.Trigger(EventNameHelper.ShowHitedNumber);
+                EventManager.Instance.Trigger(EventNameHelper.ShowHitNumber);
                 GameModel.Instance.Life = 0;
                 EventManager.Instance.Trigger(EventNameHelper.GameOver);
             }
-            else if (GameModel.Instance.Life - damage >= initLife)
+            else if (GameModel.Instance.Life - damage >= initLife)// if you are healed when heal + life >= 10
             {
                 GameModel.Instance.CurrentDamage = initLife - GameModel.Instance.Life;
                 GameModel.Instance.Life = initLife;
@@ -222,15 +287,15 @@ namespace Game
             }
             else
             {
-                if (damage < 0)
+                if (damage < 0)// normal heal
                 {
                     GameModel.Instance.CurrentDamage = -damage;
                     EventManager.Instance.Trigger(EventNameHelper.ShowHealNumber);
                 }
-                if (damage > 0)
+                if (damage > 0)// noraml hit
                 {
                     GameModel.Instance.CurrentDamage = damage;
-                    EventManager.Instance.Trigger(EventNameHelper.ShowHitedNumber);
+                    EventManager.Instance.Trigger(EventNameHelper.ShowHitNumber);
                 }
                 GameModel.Instance.Life -= damage;
             }
@@ -283,6 +348,17 @@ namespace Game
             _maskN95.enabled = false;
             StopCoroutine(_maskedMode);
             _maskedMode = null;
+        }
+
+        IEnumerator LowSpeed()
+        {
+            playerSpeed = (float)(playerSpeed * 0.8);
+            _spriteRenderer.color = Color.cyan;
+            _slow = true;
+            yield return new WaitForSeconds(lowSpeedTime);
+            _slow = false;
+            _spriteRenderer.color = Color.white;
+            playerSpeed = (float)(playerSpeed * 1.25);
         }
     }
 }

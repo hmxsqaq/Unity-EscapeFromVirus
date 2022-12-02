@@ -14,6 +14,7 @@ namespace Game
         public int ProtagonistIndex;
 
         public int CurrentDamage;
+        public int CurrentQuestionIndex;
 
         public DataRoot DataRoot;
         
@@ -43,7 +44,7 @@ namespace Game
             set
             {
                 _minutes = value;
-                EventManager.Instance.Trigger(EventNameHelper.OnDifficultyChange);
+                
             }
         }
 
@@ -53,10 +54,6 @@ namespace Game
             set
             {
                 _seconds = value;
-                if (value == 30)
-                {
-                    EventManager.Instance.Trigger(EventNameHelper.OnDifficultyChange);
-                }
             }
         }
     }

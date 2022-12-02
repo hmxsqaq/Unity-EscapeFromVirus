@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using Framework;
 using TMPro;
 using UnityEngine;
@@ -29,7 +27,7 @@ namespace Game
         public Sprite[] normalProtagonists;
         public Sprite[] attackModeProtagonists;
 
-        private void Awake()
+        private void OnEnable()
         {
             EventManager.Instance.AddEventListener(EventNameHelper.OnLifeChange,LifeUpdate);
             EventManager.Instance.AddEventListener(EventNameHelper.OnScoreChange,ScoreUpdate);
@@ -149,11 +147,5 @@ namespace Game
         {
             protagonist.sprite = attackModeProtagonists[GameModel.Instance.ProtagonistIndex];
         }
-
-        private void InvincibleModeSwutch()
-        {
-            
-        }
-        
     }
 }

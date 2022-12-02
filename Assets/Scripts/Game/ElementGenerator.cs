@@ -15,40 +15,20 @@ namespace Game
         
         [Header("Probability")]
         [Range(0f, 1f)] public float harmProbability;
-
-        [Header("Difficulty")] 
-        public float[] difficultyList = new[] { 1f, 0.8f, 0.5f };
-
-        private WaitForSeconds _waitForSeconds;
+        
         private const float Radius = 8f;
         private Vector2 _generatePosition;
 
         private void Start()
         {
-            _waitForSeconds = new WaitForSeconds(difficultyList[0]);
-            EventManager.Instance.AddEventListener(EventNameHelper.OnDifficultyChange,DifficultySelect);
-            
             StartCoroutine(ElementGenerate());
         }
         
         private void OnDisable()
         {
             StopAllCoroutines();
-            EventManager.Instance.RemoveEventListener(EventNameHelper.OnDifficultyChange,DifficultySelect);
         }
-
-        private void DifficultySelect()
-        {
-            if (GameModel.Instance.Minutes <= difficultyList.Length)
-            {
-                _waitForSeconds = new WaitForSeconds(difficultyList[GameModel.Instance.Minutes]);
-            }
-            else
-            {
-                _waitForSeconds = new WaitForSeconds(difficultyList[difficultyList.Length]);
-            }
-        }
-
+        
         IEnumerator ElementGenerate()
         {
             while (true)
@@ -66,7 +46,7 @@ namespace Game
                     int index = Random.Range(0, beneficialList.Length);
                     Instantiate(beneficialList[index], _generatePosition, Quaternion.identity, transform);
                 }
-                yield return _waitForSeconds;
+                yield return new WaitForSeconds(1 / Mathf.Log10((GameModel.Instance.Minutes * 60 + GameModel.Instance.Seconds) + 2));
             }
         }
     }

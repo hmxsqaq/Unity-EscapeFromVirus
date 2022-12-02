@@ -90,9 +90,7 @@ namespace Framework
     {
         public const string OnLifeChange = "OnLifeChange";
         public const string OnScoreChange = "OnScoreChange";
-        
-        public const string OnDifficultyChange = "OnDifficultyChange";
-        
+
         public const string GameOver = "GameOver";
         public const string GamePause = "GamePause";
         public const string GameReady = "GameReady";
@@ -105,8 +103,11 @@ namespace Framework
         public const string NormalModeSwitch = "NormalModeSwitch";
         public const string AttackModeSwitch = "AttackModeSwitch";
 
-        public const string ShowHitedNumber = "ShowHitedNumber";
+        public const string ShowHitNumber = "ShowHitNumber";
         public const string ShowScoreNumber = "ShowScoreNumber";
         public const string ShowHealNumber = "ShowHealNumber";
+
+        public const string AudioGetProps = "AudioGetProps";
+        public const string AudioVirusAttack = "AudioVirusAttack";
     }
 }
